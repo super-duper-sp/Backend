@@ -4,11 +4,14 @@ import lombok.*;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-@Builder
-@ToString
+@AllArgsConstructor
+
 public class JwtResponse {
-    private String jwtToken;
-    private String username;
+
+    private String token;
+
+    private String status;
+
+    private String message;
 }
