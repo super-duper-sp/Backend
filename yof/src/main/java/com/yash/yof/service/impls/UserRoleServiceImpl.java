@@ -6,22 +6,15 @@ import com.yash.yof.entity.UserRole;
 import com.yash.yof.exceptions.ApplicationException;
 import com.yash.yof.repository.UserRoleRepository;
 import com.yash.yof.Dto.UserRoleDto;
-import com.yash.yof.constansts.UserRoleTypes;
 import com.yash.yof.service.IService.IUserRoleService;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class UserRoleServiceImpl implements IUserRoleService {
