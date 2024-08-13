@@ -11,6 +11,7 @@ import com.yash.yof.service.IService.IUserService;
 
 import com.yash.yof.exceptions.ApplicationException;
 
+import com.yash.yof.utils.EmailService;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
@@ -41,9 +42,13 @@ public class UserServiceImpl implements IUserService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private EmailService emailService;
+
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
     public String createNewUser(UserDto userDto) {
+
         User user = null;
         String message = null;
         if (ObjectUtils.isNotEmpty(userDto)) {
@@ -75,8 +80,11 @@ public class UserServiceImpl implements IUserService {
                                 .userRepository
                                 .save(user);
 
-                        if (ObjectUtils.isNotEmpty(user))
-                            message = AppConstants.NEW_USER_REGISTRATION_SUCCESS_MESSAGE;
+                        if (ObjectUtils.isNotEmpty(user)){
+                            String body = String.format("Hi %1$s, \n\nYour request has been sent to the admin for approval. " + "Once approved, you will receive an email with login credentials. \n\nBest regards, \nYOF Team", user.getFullName());
+
+                            this.emailService.sendEmail(user.getEmailAdd(),"Your Account has been created.",body);
+                            message = AppConstants.NEW_USER_REGISTRATION_SUCCESS_MESSAGE;}
                         else
                             message = "YOF User creation failed";
                     } else

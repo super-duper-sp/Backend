@@ -5,6 +5,7 @@ import com.yash.yof.jwt.JwtRequest;
 import com.yash.yof.jwt.JwtResponse;
 import com.yash.yof.service.IService.IAuthService;
 import com.yash.yof.service.IService.IUserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,4 +38,6 @@ public class LoginSignController {
                 .createNewUser(userDto);
         return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
+
+
 }
