@@ -1,5 +1,6 @@
 package com.yash.yof.service.impls;
 
+import com.yash.yof.Dto.UpdatePasswordDto;
 import com.yash.yof.Dto.UserDto;
 import com.yash.yof.Dto.UserRoleDto;
 import com.yash.yof.constansts.AppConstants;
@@ -22,7 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -64,7 +64,7 @@ public class UserServiceImpl implements IUserService {
                     if (ObjectUtils.isNotEmpty(userDto.getEmpId())) {
                         UserRoleDto userRoleDto =
                                 userRoleService
-                                .getUserRoleByRoleName(UserRoleTypes.ASSOCIATE.toString());
+                                        .getUserRoleByRoleName(UserRoleTypes.ASSOCIATE.toString());
 
                         userDto.setUserRole(userRoleDto);
 
@@ -101,9 +101,9 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public List<UserDto> getAllAssociates() {
-        List<User> allTrainers = this.userRepository.findAllUsersByRole(UserRoleTypes.ASSOCIATE.toString());
-        if (!allTrainers.isEmpty()) {
-            return allTrainers
+        List<User> allAssiciates = this.userRepository.findAllUsersByRole(UserRoleTypes.ASSOCIATE.toString());
+        if (!allAssiciates.isEmpty()) {
+            return allAssiciates
                     .stream()
                     .map(yur -> this
                             .modelMapper
@@ -111,6 +111,46 @@ public class UserServiceImpl implements IUserService {
                     .collect(Collectors.toList());
         } else
             throw new ApplicationException("No Associates found !");
+    }
+
+    @Override
+    public UserDto getAssociateById(long id) {
+        User user = userRepository.getUserByEmpId(id);
+        if (user != null)
+            return modelMapper.map(user, UserDto.class);
+        else
+            throw new ApplicationException("No Associate Found!");
+    }
+
+    @Override
+    public UserDto deleteAssociateById(Long empId) {
+        User user = this.userRepository.getUserByEmpId(empId);
+        Integer associateDeleted = userRepository.deleteUserByEmpId(empId);
+        if (associateDeleted > 0)
+            return modelMapper.map(user, UserDto.class);
+        return null;
+    }
+
+
+    @Override
+    public String updatePassword(Long empId, UpdatePasswordDto updatePasswordDto) {
+        User user = userRepository.getUserByEmpId(empId);
+        String message ;
+
+        if(!passwordEncoder.matches(updatePasswordDto.getOldPassword(),user.getPassword())){
+            throw new ApplicationException("Old Password is incorrect!!!");
+        }
+        if(updatePasswordDto.getNewPassword().equals(updatePasswordDto.getOldPassword())){
+            throw new ApplicationException("Old Password and New password cannot be same!!");
+        }
+        if (!updatePasswordDto.getNewPassword().equals(updatePasswordDto.getConfirmPassword())) {
+            throw new RuntimeException("New password and confirm password do not match!!!");
+        }
+
+        user.setPassword(passwordEncoder.encode(updatePasswordDto.getNewPassword()));
+        userRepository.save(user);
+        message = AppConstants.PASSWORD_UPDATE_SUCCESS_MESSAGE;
+        return message;
     }
 
 
