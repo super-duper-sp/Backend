@@ -83,7 +83,7 @@ public class UserServiceImpl implements IUserService {
                         if (ObjectUtils.isNotEmpty(user)){
                             String body = String.format("Hi %1$s, \n\nYour request has been sent to the admin for approval. " + "Once approved, you will receive an email with login credentials. \n\nBest regards, \nYOF Team", user.getFullName());
 
-                            this.emailService.sendEmail(user.getEmailAdd(),"Your Account has been created.",body);
+//                            this.emailService.sendEmail(user.getEmailAdd(),"Your Account has been created.",body);
                             message = AppConstants.NEW_USER_REGISTRATION_SUCCESS_MESSAGE;}
                         else
                             message = "YOF User creation failed";
